@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 199 94% 74%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 54 100% 81%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 4 100% 75%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 4 100% 75%;
+    --destructive-foreground: 0 0% 10%;
+    --border: 0 0% 10%;
+    --input: 0 0% 90%;
+    --ring: 199 94% 74%;
+    --radius: 0.625rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 26%;
+    --sidebar-primary: 199 94% 74%;
+    --sidebar-primary-foreground: 0 0% 10%;
+    --sidebar-accent: 54 100% 81%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 91%;
+    --sidebar-ring: 199 94% 74%;
+    
+    /* TEIKOS Brand Colors */
+    --teikos-yellow: #FFF59D;
+    --teikos-yellow-deep: #FFF176;
+    --teikos-blue: #81D4FA;
+    --teikos-blue-deep: #4FC3F7;
+    --teikos-coral: #FF8A80;
+    --teikos-coral-deep: #FF5252;
+    --teikos-dark: #1A1A1A;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold;
+  }
+}
+
+@layer components {
+  /* Halftone Pattern Background */
+  .halftone-bg {
+    background-color: var(--teikos-yellow);
+    position: relative;
+  }
+  
+  .halftone-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, #1A1A1A 1px, transparent 1px);
+    background-size: 8px 8px;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+  
+  /* Button Styles */
+  .btn-primary {
+    @apply bg-teikos-blue border-[3px] border-dark rounded-lg px-8 py-4 font-heading font-semibold text-base;
+    box-shadow: 4px 4px 0 #1A1A1A;
+    transition: all 0.2s ease-out;
+  }
+  
+  .btn-primary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #1A1A1A;
+  }
+  
+  .btn-primary:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #1A1A1A;
+  }
+  
+  .btn-secondary {
+    @apply bg-white border-[3px] border-dark rounded-lg px-8 py-4 font-heading font-semibold text-base;
+    box-shadow: 4px 4px 0 #1A1A1A;
+    transition: all 0.2s ease-out;
+  }
+  
+  .btn-secondary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #1A1A1A;
+  }
+  
+  .btn-coral {
+    @apply bg-teikos-coral border-[3px] border-dark rounded-lg px-8 py-4 font-heading font-semibold text-base text-white;
+    box-shadow: 4px 4px 0 #1A1A1A;
+    transition: all 0.2s ease-out;
+  }
+  
+  .btn-coral:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #1A1A1A;
+  }
+  
+  /* Card Styles */
+  .teikos-card {
+    @apply bg-white border-[3px] border-dark rounded-xl p-6;
+    box-shadow: 6px 6px 0 #1A1A1A;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .teikos-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 #1A1A1A;
+  }
+  
+  /* Section Spacing */
+  .section-padding {
+    @apply py-24 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-max {
+    @apply max-w-7xl mx-auto;
+  }
+}
+
+@layer utilities {
+  /* Text Gradient */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--teikos-blue) 0%, var(--teikos-coral) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* 3D Transform Utilities */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
