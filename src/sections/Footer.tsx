@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
 import { Twitter, Linkedin, Github } from 'lucide-react';
+import { CONTACT_MAILTO_URL } from '@/config/appUrls';
 
 const footerLinks = {
   product: [
     { label: 'Features', href: '#features' },
     { label: 'Pricing', href: '#pricing' },
-    { label: 'Integrations', href: '#' },
+    { label: 'Integrations', href: '#integrations' },
     { label: 'Changelog', href: '#' },
   ],
   resources: [
@@ -16,7 +17,7 @@ const footerLinks = {
   ],
   company: [
     { label: 'About', href: '#' },
-    { label: 'Contact', href: '#' },
+    { label: 'Contact', href: CONTACT_MAILTO_URL },
     { label: 'Privacy Policy', href: '#' },
     { label: 'Terms of Service', href: '#' },
   ],

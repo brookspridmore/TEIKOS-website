@@ -11,3 +11,7 @@ function envUrl(key: string): string {
 
 export const APP_SIGNUP_URL = envUrl('VITE_APP_SIGNUP_URL');
 export const APP_LOGIN_URL = envUrl('VITE_APP_LOGIN_URL');
+
+/** Public contact email (FAQ, footer, etc.) */
+export const CONTACT_EMAIL = 'hello@teikos.io';
+export const CONTACT_MAILTO_URL = `mailto:${CONTACT_EMAIL}`;

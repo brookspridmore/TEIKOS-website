@@ -47,8 +47,10 @@ export function APIFlow() {
             The 4-Step Booking Pipeline
           </h2>
           <p className="font-body text-lg text-dark/70 max-w-2xl mx-auto">
-            What &quot;never before seen&quot; actually means — traditional calendar tools 
-            skip steps 3 and 4 entirely.
+            TEIKOS is a &apos;first of its kind&apos; application. Our 4 step booking
+            pipeline is specifically designed to guardrail agentic scheduling. Traditional
+            calendar tools [often duct taped to agent workflows] skip steps 3 and 4
+            entirely.
           </p>
         </ScrollReveal>
 

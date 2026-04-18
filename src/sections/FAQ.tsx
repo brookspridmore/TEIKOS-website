@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { ScrollReveal } from '@/components/ScrollReveal';
+import { CONTACT_MAILTO_URL } from '@/config/appUrls';
 import {
   Accordion,
   AccordionContent,
@@ -79,7 +80,7 @@ export function FAQ() {
             Still have questions?
           </p>
           <motion.a
-            href="#"
+            href={CONTACT_MAILTO_URL}
             className="inline-flex items-center gap-2 text-teikos-blue font-heading font-semibold hover:underline"
             whileHover={{ x: 5 }}
           >
