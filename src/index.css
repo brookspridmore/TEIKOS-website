@@ -53,8 +53,8 @@
   
   html {
     scroll-behavior: smooth;
-    /* Fixed nav (~72px) — hash links land with section titles visible */
-    scroll-padding-top: 5rem;
+    /* Nav is h-[72px]; add ~8px so section titles sit clearly below the bar, not flush under it */
+    scroll-padding-top: calc(72px + 0.5rem);
   }
   
   body {

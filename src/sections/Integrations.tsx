@@ -52,7 +52,7 @@ export function Integrations() {
   };
 
   return (
-    <section id="integrations" className="section-padding bg-gray-50 scroll-mt-[72px]">
+    <section id="integrations" className="section-padding bg-gray-50">
       <div className="container-max mx-auto">
         {/* Section Header */}
         <ScrollReveal className="text-center mb-16">
