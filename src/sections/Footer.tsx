@@ -38,9 +38,12 @@ export function Footer() {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 relative">
-                <img 
-                  src="/images/logo-cube.png" 
-                  alt="TEIKOS" 
+                <img
+                  src="/images/logo-cube.png"
+                  alt=""
+                  width={40}
+                  height={40}
+                  decoding="async"
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -67,9 +70,9 @@ export function Footer() {
 
           {/* Product Links */}
           <div>
-            <h4 className="font-heading font-bold text-sm uppercase tracking-wider text-white/40 mb-4">
+            <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-white/40 mb-4">
               Product
-            </h4>
+            </h2>
             <ul className="space-y-3">
               {footerLinks.product.map((link, index) => (
                 <li key={index}>
@@ -86,9 +89,9 @@ export function Footer() {
 
           {/* Resources Links */}
           <div>
-            <h4 className="font-heading font-bold text-sm uppercase tracking-wider text-white/40 mb-4">
+            <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-white/40 mb-4">
               Resources
-            </h4>
+            </h2>
             <ul className="space-y-3">
               {footerLinks.resources.map((link, index) => (
                 <li key={index}>
@@ -105,9 +108,9 @@ export function Footer() {
 
           {/* Company Links */}
           <div>
-            <h4 className="font-heading font-bold text-sm uppercase tracking-wider text-white/40 mb-4">
+            <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-white/40 mb-4">
               Company
-            </h4>
+            </h2>
             <ul className="space-y-3">
               {footerLinks.company.map((link, index) => (
                 <li key={index}>

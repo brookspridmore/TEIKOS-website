@@ -67,19 +67,38 @@
 }
 
 @layer components {
-  /* Halftone Pattern Background */
+  /*
+   * Pale yellow section background + dot grid matrix (journal / dot-paper style).
+   * Used only on `.halftone-bg` sections — white, blue, gray, and dark sections stay plain.
+   * `--halftone-dot-step` is grid cell size (dot spacing); slightly open on sm+ for readability.
+   */
   .halftone-bg {
+    --halftone-dot-step: 7px;
     background-color: var(--teikos-yellow);
     position: relative;
+    isolation: isolate;
   }
-  
+
+  @media (min-width: 640px) {
+    .halftone-bg {
+      --halftone-dot-step: 9px;
+    }
+  }
+
   .halftone-bg::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, #1A1A1A 1px, transparent 1px);
-    background-size: 8px 8px;
-    opacity: 0.08;
+    z-index: 0;
+    background-color: transparent;
+    /* Dot alpha: was 0.14 — revert if too strong */
+    background-image: radial-gradient(
+      circle at center,
+      rgba(26, 26, 26, 0.17) 1px,
+      transparent 1.5px
+    );
+    background-size: var(--halftone-dot-step) var(--halftone-dot-step);
+    background-position: 0 0;
     pointer-events: none;
   }
   

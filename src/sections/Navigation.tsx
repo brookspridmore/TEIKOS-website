@@ -65,9 +65,12 @@ export function Navigation() {
             transition={{ duration: 0.2 }}
           >
             <div className="w-10 h-10 relative">
-              <img 
-                src="/images/logo-cube.png" 
-                alt="TEIKOS" 
+              <img
+                src="/images/logo-cube.png"
+                alt=""
+                width={40}
+                height={40}
+                decoding="async"
                 className="w-full h-full object-contain"
               />
             </div>
@@ -114,8 +117,8 @@ export function Navigation() {
           {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon">
-                <Menu className="w-6 h-6" />
+              <Button type="button" variant="ghost" size="icon" aria-label="Open main menu">
+                <Menu className="w-6 h-6" aria-hidden />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-white border-l-[3px] border-dark">

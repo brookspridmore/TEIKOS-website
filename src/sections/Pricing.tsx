@@ -1,145 +1,218 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { Check } from 'lucide-react';
 import { ScrollReveal } from '@/components/ScrollReveal';
+import { APP_LOGIN_URL, APP_SIGNUP_URL } from '@/config/appUrls';
+import {
+  AGENCY_INCLUDED_CLIENTS,
+  AGENCY_PLAN,
+  AGENCY_SEAT_TIERS,
+  FREE_PLAN,
+  PRO_PLAN,
+  type BillingCycle,
+  type PlanColumn,
+} from '@/data/pricing';
 
-const STRIPE_PRICING_SCRIPT = 'https://js.stripe.com/v3/pricing-table.js';
-
-function loadStripePricingScript(): Promise<void> {
-  if (document.querySelector(`script[src="${STRIPE_PRICING_SCRIPT}"]`)) {
-    return Promise.resolve();
-  }
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = STRIPE_PRICING_SCRIPT;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Failed to load Stripe Pricing Table script'));
-    document.body.appendChild(script);
-  });
+function paidPlanHref(): string {
+  return APP_LOGIN_URL !== '#' ? APP_LOGIN_URL : APP_SIGNUP_URL;
 }
 
-const tableHostClass =
-  'w-full min-h-[480px] flex justify-center [&_stripe-pricing-table]:w-full';
+const billingToggleSelectedClass =
+  'bg-teikos-coral text-dark border-[2px] border-dark shadow-[3px_3px_0_#1A1A1A]';
+const billingToggleIdleClass = 'text-dark/60 hover:text-dark bg-transparent';
+
+const pricingCardClass =
+  'relative flex h-full flex-col bg-white border-[3px] border-dark rounded-xl p-6 shadow-[6px_6px_0_#1A1A1A]';
+
+/** From md+ (2–4 column layout), match description block height so price + CTAs line up across plans. */
+const planDescriptionSlotClass =
+  'max-md:block md:flex md:flex-col md:justify-end md:min-h-[7.75rem] lg:min-h-[8.25rem] xl:min-h-[8.75rem]';
+
+function FeatureList({ items }: { items: string[] }) {
+  return (
+    <ul className="mt-6 flex flex-col gap-3 font-body text-sm text-dark/85 leading-snug">
+      {items.map((line) => (
+        <li key={line} className="flex gap-2.5">
+          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-dark bg-teikos-yellow/50">
+            <Check className="h-3 w-3 text-teikos-coral-deep" strokeWidth={3} />
+          </span>
+          <span>{line}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function PlanCard({
+  plan,
+  cycle,
+  className = '',
+}: {
+  plan: PlanColumn;
+  cycle: BillingCycle;
+  className?: string;
+}) {
+  const pack = cycle === 'monthly' ? plan.monthly : plan.yearly;
+  const showYearlyDeal = plan.id !== 'free' && cycle === 'yearly' && plan.discountBadge;
+
+  return (
+    <div
+      className={`${pricingCardClass} ${plan.popular ? 'bg-teikos-yellow-deep/35 ring-2 ring-dark/10' : ''} ${className}`}
+    >
+      {plan.popular ? (
+        <span className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border-[2px] border-dark bg-teikos-coral px-3 py-1 font-body text-xs font-bold text-white shadow-[3px_3px_0_#1A1A1A]">
+          Most popular
+        </span>
+      ) : null}
+
+      <div className="mb-4 flex items-start gap-3">
+        <img src="/images/logo-cube.png" alt="" className="h-12 w-12 shrink-0 object-contain" width={48} height={48} />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="font-heading text-lg font-bold leading-tight text-dark sm:text-xl">{plan.name}</h3>
+            {showYearlyDeal ? (
+              <span className="rounded-full border-[2px] border-dark bg-white px-2 py-0.5 font-body text-xs font-semibold text-dark">
+                {plan.discountBadge}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      <div className={planDescriptionSlotClass}>
+        <p className="font-body text-sm leading-relaxed text-dark/75">{plan.description}</p>
+      </div>
+
+      <div className="mt-6 border-t-2 border-dashed border-dark/20 pt-6">
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+          <span className="font-heading text-4xl font-bold tracking-tight text-dark">{pack.priceLine}</span>
+          {pack.subPriceLine ? (
+            <span className="font-body text-sm font-medium text-dark/65">{pack.subPriceLine}</span>
+          ) : null}
+        </div>
+      </div>
+
+      {plan.id === 'free' ? (
+        <a href={APP_SIGNUP_URL} className="btn-coral mt-6 block w-full text-center">
+          Get started free
+        </a>
+      ) : (
+        <a href={paidPlanHref()} className="btn-coral mt-6 block w-full text-center">
+          Continue in TEIKOS
+        </a>
+      )}
+
+      <p className="mt-3 text-center font-body text-xs text-dark/55">
+        Subscriptions and upgrades are completed in the app after you sign in.
+      </p>
+
+      <FeatureList items={pack.features} />
+    </div>
+  );
+}
+
+function AgencySeatsColumn({ className = '' }: { className?: string }) {
+  return (
+    <div className={`${pricingCardClass} ${className} bg-white`}>
+      <span className="mb-3 inline-block w-fit rounded-full border-[2px] border-teikos-coral bg-teikos-coral/15 px-3 py-1 font-body text-xs font-semibold text-teikos-coral-deep">
+        Active Agency subscribers only
+      </span>
+
+      <div className="mb-2 flex items-start gap-3">
+        <img src="/images/logo-cube.png" alt="" className="h-12 w-12 shrink-0 object-contain" width={48} height={48} />
+        <div>
+          <h3 className="font-heading text-lg font-bold text-dark sm:text-xl">Add client seats</h3>
+          <p className="mt-1 font-body text-sm text-dark/75">
+            Graduated per-seat pricing for managed clients beyond the ({AGENCY_INCLUDED_CLIENTS}) included with Agency.
+            Each row is the rate per additional seat in that band.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 overflow-hidden rounded-lg border-[2px] border-dark bg-white">
+        <table className="w-full border-collapse text-left font-body text-sm">
+          <thead>
+            <tr className="border-b-2 border-dark bg-teikos-yellow/40">
+              <th className="px-3 py-2.5 font-semibold text-dark">Seat tier</th>
+              <th className="px-3 py-2.5 font-semibold text-dark">Per seat / mo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {AGENCY_SEAT_TIERS.map((row) => (
+              <tr key={row.seatRangeLabel} className="border-b border-dark/15 last:border-b-0">
+                <td className="px-3 py-2.5 text-dark/85">{row.seatRangeLabel}</td>
+                <td className="px-3 py-2.5 font-semibold text-dark">{row.pricePerSeatMonthly}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="mt-4 font-body text-xs leading-relaxed text-dark/60">
+        Eligibility and exact totals are confirmed in TEIKOS billing. Seat add-ons are billed monthly in USD.
+      </p>
+
+      <div className="mt-auto pt-6 w-full">
+        <a href={paidPlanHref()} className="btn-coral block w-full text-center">
+          Manage seats in TEIKOS
+        </a>
+      </div>
+    </div>
+  );
+}
 
 export function Pricing() {
-  const primaryRef = useRef<HTMLDivElement>(null);
-  const secondaryRef = useRef<HTMLDivElement>(null);
-  const [scriptReady, setScriptReady] = useState(
-    () => !!document.querySelector(`script[src="${STRIPE_PRICING_SCRIPT}"]`),
-  );
-  const [embedError, setEmbedError] = useState<string | null>(null);
-
-  const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined;
-  const pricingTableId = import.meta.env.VITE_STRIPE_PRICING_TABLE_ID as string | undefined;
-  const pricingTableId2 = import.meta.env.VITE_STRIPE_PRICING_TABLE_ID_2 as string | undefined;
-
-  const pk = publishableKey?.trim();
-  const id1 = pricingTableId?.trim();
-  const id2 = pricingTableId2?.trim();
-
-  useEffect(() => {
-    if (!pk || !id1) return;
-
-    let cancelled = false;
-    loadStripePricingScript()
-      .then(() => {
-        if (!cancelled) setScriptReady(true);
-      })
-      .catch(() => {
-        if (!cancelled) setEmbedError('Could not load pricing table. Check your connection and try again.');
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [pk, id1]);
-
-  useEffect(() => {
-    if (!scriptReady || !pk || !id1) return;
-
-    if (primaryRef.current) {
-      primaryRef.current.innerHTML = '';
-      const el = document.createElement('stripe-pricing-table');
-      el.setAttribute('pricing-table-id', id1);
-      el.setAttribute('publishable-key', pk);
-      primaryRef.current.appendChild(el);
-    }
-
-    if (secondaryRef.current) {
-      secondaryRef.current.innerHTML = '';
-      if (id2) {
-        const el2 = document.createElement('stripe-pricing-table');
-        el2.setAttribute('pricing-table-id', id2);
-        el2.setAttribute('publishable-key', pk);
-        secondaryRef.current.appendChild(el2);
-      }
-    }
-  }, [scriptReady, pk, id1, id2]);
-
-  const missingConfig = !pk || !id1;
+  const [cycle, setCycle] = useState<BillingCycle>('monthly');
 
   return (
     <section id="pricing" className="section-padding halftone-bg">
       <div className="container-max mx-auto">
-        <ScrollReveal className="text-center mb-12">
+        <ScrollReveal className="text-center mb-10">
           <span className="inline-block bg-white border-[2px] border-dark rounded-full px-4 py-2 text-sm font-body font-semibold mb-4">
             Pricing
           </span>
           <h2 className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-dark max-w-3xl mx-auto mb-4">
-            Simple,{' '}
-            <span className="text-teikos-blue">Transparent</span> Pricing
+            Simple, <span className="text-teikos-blue-deep">Transparent</span> Pricing
           </h2>
           <p className="font-body text-lg text-dark/70 max-w-2xl mx-auto">
-            Choose the plan that fits your team. Prices and features are managed in Stripe.
+            Compare plans here, then sign in to TEIKOS to subscribe, change billing, or add Agency seats.
           </p>
         </ScrollReveal>
 
-        {missingConfig ? (
-          <ScrollReveal>
-            <div className="max-w-xl mx-auto bg-white border-[3px] border-dark rounded-xl p-8 text-center">
-              <p className="font-body text-dark font-semibold mb-2">Stripe pricing table is not configured yet</p>
-              <p className="font-body text-sm text-dark/70 leading-relaxed">
-                Add{' '}
-                <code className="font-mono text-xs bg-dark/5 px-1 py-0.5 rounded">VITE_STRIPE_PUBLISHABLE_KEY</code>{' '}
-                and{' '}
-                <code className="font-mono text-xs bg-dark/5 px-1 py-0.5 rounded">VITE_STRIPE_PRICING_TABLE_ID</code>{' '}
-                to your <code className="font-mono text-xs">.env</code> file (Stripe Dashboard → Product catalog →
-                Pricing tables). For the optional second table (Agency-only monthly products), add{' '}
-                <code className="font-mono text-xs bg-dark/5 px-1 py-0.5 rounded">
-                  VITE_STRIPE_PRICING_TABLE_ID_2
-                </code>
-                . Then restart the dev server.
-              </p>
-            </div>
-          </ScrollReveal>
-        ) : embedError ? (
-          <ScrollReveal>
-            <p className="font-body text-center text-teikos-coral">{embedError}</p>
-          </ScrollReveal>
-        ) : (
-          <>
-            <ScrollReveal>
-              <div ref={primaryRef} className={tableHostClass} />
-            </ScrollReveal>
-            {id2 ? (
-              <ScrollReveal className="mt-16">
-                <div className="max-w-3xl mx-auto mb-8 px-4 text-center">
-                  <span className="inline-block bg-teikos-coral/15 border-[2px] border-teikos-coral rounded-full px-4 py-1.5 text-xs font-body font-semibold text-teikos-coral-deep mb-3">
-                    Active Agency subscribers only
-                  </span>
-                  <h3 className="font-heading font-bold text-2xl sm:text-3xl text-dark">
-                    Agency monthly add-ons
-                  </h3>
-                  <p className="font-body text-sm sm:text-base text-dark/70 mt-3 leading-relaxed">
-                    The plans in this table are three monthly products reserved for customers with an{' '}
-                    <span className="font-semibold text-dark">active Agency subscription</span>. Purchase
-                    eligibility is enforced in Stripe and your TEIKOS account—not by this page alone.
-                  </p>
-                </div>
-                <div ref={secondaryRef} className={tableHostClass} />
-              </ScrollReveal>
-            ) : null}
-          </>
-        )}
+        <ScrollReveal className="mb-10 flex justify-center">
+          <div
+            className="inline-flex items-center gap-1 rounded-full border-[2px] border-dark bg-white p-1.5 shadow-[4px_4px_0_#1A1A1A]"
+            role="group"
+            aria-label="Billing period"
+          >
+            <button
+              type="button"
+              className={`rounded-full px-5 py-2.5 font-body text-sm font-semibold transition-all sm:px-7 ${
+                cycle === 'monthly' ? billingToggleSelectedClass : billingToggleIdleClass
+              }`}
+              onClick={() => setCycle('monthly')}
+            >
+              Monthly
+            </button>
+            <button
+              type="button"
+              className={`rounded-full px-5 py-2.5 font-body text-sm font-semibold transition-all sm:px-7 ${
+                cycle === 'yearly' ? billingToggleSelectedClass : billingToggleIdleClass
+              }`}
+              onClick={() => setCycle('yearly')}
+            >
+              Yearly
+            </button>
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+            <PlanCard plan={FREE_PLAN} cycle={cycle} className="order-1" />
+            <PlanCard plan={PRO_PLAN} cycle={cycle} className="order-2" />
+            <PlanCard plan={AGENCY_PLAN} cycle={cycle} className="order-3" />
+            <AgencySeatsColumn className="order-4" />
+          </div>
+        </ScrollReveal>
 
         <ScrollReveal className="mt-12 text-center" delay={0.2}>
           <div className="font-body text-sm text-dark/70 max-w-md mx-auto space-y-1 leading-relaxed">
@@ -147,7 +220,7 @@ export function Pricing() {
             <p>
               <a
                 href="mailto:hello@teikos.io?subject=TEIKOS%20pricing%20question"
-                className="text-teikos-blue font-semibold hover:underline"
+                className="text-teikos-blue-deep font-semibold hover:underline"
               >
                 Send us a message
               </a>

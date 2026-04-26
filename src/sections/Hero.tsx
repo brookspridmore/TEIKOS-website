@@ -140,11 +140,12 @@ export function Hero() {
               >
                 <img
                   src="/images/logo-teikos-word.png"
-                  alt="TEIKOS"
+                  alt="TEIKOS wordmark"
                   width={1019}
                   height={296}
                   className="w-full h-auto object-contain"
                   decoding="async"
+                  fetchPriority="high"
                 />
               </motion.div>
             </div>

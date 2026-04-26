@@ -150,10 +150,12 @@ export function Demo() {
                 </div>
                 <span className="font-mono text-xs text-white/50">Agent Lab</span>
                 <button
+                  type="button"
                   onClick={() => setIsPlaying(!isPlaying)}
                   className="text-white/70 hover:text-white transition-colors"
+                  aria-label={isPlaying ? 'Pause demo animation' : 'Play demo animation'}
                 >
-                  <Play className={`w-4 h-4 ${isPlaying ? 'opacity-50' : ''}`} />
+                  <Play className={`w-4 h-4 ${isPlaying ? 'opacity-50' : ''}`} aria-hidden />
                 </button>
               </div>
 
