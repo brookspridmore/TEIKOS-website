@@ -1,0 +1,23 @@
+{
+  "name": "TEIKOS",
+  "short_name": "TEIKOS",
+  "description": "Infrastructure for reliable voice-agent scheduling.",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "theme_color": "#FFF59D",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "start_url": "/"
+}
