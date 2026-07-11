@@ -1,4 +1,12 @@
-import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import {
+  animate,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+  useTransform,
+} from 'framer-motion';
 import { ArrowDown, Zap, Shield, Sparkles, Database, Globe, Workflow } from 'lucide-react';
 import { fadeInUp, staggerContainer } from '@/lib/animation';
 import { APP_SIGNUP_URL } from '@/config/appUrls';
@@ -13,15 +21,103 @@ const trustBadges = [
 ];
 
 /** Subtle “toward / away from camera” rotation — fixed position, no vertical drift */
-const wordmarkDepthTilt = {
-  style: { transformStyle: 'preserve-3d' as const, transformPerspective: 960 },
-  animate: { rotateY: [-7, 7, -7] },
-  transition: {
-    duration: 5.5,
-    repeat: Infinity,
-    ease: 'easeInOut' as const,
-  },
+const WORDMARK_TILT = 10;
+
+/**
+ * Shadow style toggle — flip to roll back:
+ * - 'ground'  → transform-based ellipse under the wordmark (current)
+ * - 'filter'  → drop-shadow on the logo (previous approach)
+ */
+const WORDMARK_SHADOW_MODE = 'filter' as 'ground' | 'filter';
+
+const wordmarkMotionTransition = {
+  duration: 5.5,
+  repeat: Infinity,
+  ease: 'easeInOut' as const,
 };
+
+type AnimatedWordmarkProps = {
+  className: string;
+  alt: string;
+  fetchPriority?: 'high' | 'low' | 'auto';
+  /** Match image alignment — desktop wordmark uses object-right */
+  shadowAlign?: 'center' | 'right';
+};
+
+/** Single tilt value drives rotateY and shadow so both stay frame-locked */
+function AnimatedWordmark({
+  className,
+  alt,
+  fetchPriority,
+  shadowAlign = 'center',
+}: AnimatedWordmarkProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const tilt = useMotionValue(-WORDMARK_TILT);
+
+  const shadowX = useTransform(tilt, [-WORDMARK_TILT, WORDMARK_TILT], [12, -12]);
+  const shadowSoftX = useTransform(tilt, [-WORDMARK_TILT, WORDMARK_TILT], [4, -4]);
+  const filter = useMotionTemplate`drop-shadow(${shadowX}px 14px 6px rgba(26, 26, 26, 0.35)) drop-shadow(${shadowSoftX}px 8px 14px rgba(26, 26, 26, 0.22))`;
+
+  const groundShadowX = useTransform(tilt, [-WORDMARK_TILT, WORDMARK_TILT], [8, -8]);
+  const groundShadowScaleX = useTransform(tilt, [-WORDMARK_TILT, WORDMARK_TILT], [0.96, 1.04]);
+  const groundShadowOpacity = useTransform(tilt, [-WORDMARK_TILT, 0, WORDMARK_TILT], [0.42, 0.34, 0.42]);
+
+  const groundShadowClassName =
+    shadowAlign === 'right'
+      ? 'pointer-events-none absolute bottom-[2%] right-0 z-0 h-[28%] w-[92%] origin-right rounded-[50%] bg-dark blur-[12px]'
+      : 'pointer-events-none absolute bottom-[2%] left-1/2 z-0 h-[28%] w-[88%] -translate-x-1/2 rounded-[50%] bg-dark blur-[12px]';
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      tilt.set(0);
+      return;
+    }
+
+    const controls = animate(
+      tilt,
+      [-WORDMARK_TILT, WORDMARK_TILT, -WORDMARK_TILT],
+      wordmarkMotionTransition,
+    );
+
+    return () => controls.stop();
+  }, [tilt, prefersReducedMotion]);
+
+  const showShadow = !prefersReducedMotion;
+  const useGroundShadow = WORDMARK_SHADOW_MODE === 'ground';
+  const useFilterShadow = WORDMARK_SHADOW_MODE === 'filter';
+
+  return (
+    <div className="relative w-full [perspective:960px]">
+      {showShadow && useGroundShadow && (
+        <motion.div
+          aria-hidden
+          className={groundShadowClassName}
+          style={{
+            x: groundShadowX,
+            scaleX: groundShadowScaleX,
+            opacity: groundShadowOpacity,
+            willChange: 'transform, opacity',
+          }}
+        />
+      )}
+      <motion.img
+        src="/images/logo-teikos-word.png"
+        alt={alt}
+        width={1019}
+        height={296}
+        className={`relative z-10 ${className}`}
+        decoding="async"
+        fetchPriority={fetchPriority}
+        style={{
+          rotateY: tilt,
+          filter: showShadow && useFilterShadow ? filter : undefined,
+          transformStyle: 'preserve-3d',
+          willChange: useFilterShadow ? 'transform, filter' : 'transform',
+        }}
+      />
+    </div>
+  );
+}
 
 export function Hero() {
   const scrollToSection = (href: string) => {
@@ -118,36 +214,19 @@ export function Hero() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="relative hidden lg:flex w-full max-w-lg justify-end [perspective:960px]">
-              <motion.div
-                className="relative w-full max-w-lg origin-center will-change-transform"
-                {...wordmarkDepthTilt}
-              >
-                <img
-                  src="/images/logo-teikos-word.png"
-                  alt="TEIKOS"
-                  width={1019}
-                  height={296}
-                  className="w-full h-auto object-contain object-right"
-                  decoding="async"
-                />
-              </motion.div>
+            <div className="relative hidden lg:flex w-full max-w-lg justify-end">
+              <AnimatedWordmark
+                alt="TEIKOS"
+                shadowAlign="right"
+                className="w-full max-w-lg origin-center h-auto object-contain object-right"
+              />
             </div>
-            <div className="relative lg:hidden w-full max-w-xs sm:max-w-sm mx-auto [perspective:960px]">
-              <motion.div
-                className="relative w-full origin-center will-change-transform"
-                {...wordmarkDepthTilt}
-              >
-                <img
-                  src="/images/logo-teikos-word.png"
-                  alt="TEIKOS wordmark"
-                  width={1019}
-                  height={296}
-                  className="w-full h-auto object-contain"
-                  decoding="async"
-                  fetchPriority="high"
-                />
-              </motion.div>
+            <div className="relative lg:hidden w-full max-w-xs sm:max-w-sm mx-auto">
+              <AnimatedWordmark
+                alt="TEIKOS wordmark"
+                className="w-full origin-center h-auto object-contain"
+                fetchPriority="high"
+              />
             </div>
           </motion.div>
         </div>

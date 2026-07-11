@@ -5,9 +5,9 @@ import { CONTACT_MAILTO_URL } from '@/config/appUrls';
 
 const footerLinks = {
   product: [
-    { label: 'Features', href: '/#features' },
-    { label: 'Pricing', href: '/#pricing' },
-    { label: 'Integrations', href: '/#integrations' },
+    { label: 'Features', href: '/#features', isHomeSection: true },
+    { label: 'Pricing', href: '/#pricing', isHomeSection: true },
+    { label: 'Integrations', href: '/#integrations', isHomeSection: true },
   ],
   resources: [
     { label: 'Documentation', href: '/docs', isRoute: true },
@@ -38,16 +38,26 @@ function FooterLink({
   label,
   isRoute,
   external,
+  isHomeSection,
 }: {
   href: string;
   label: string;
   isRoute?: boolean;
   external?: boolean;
+  isHomeSection?: boolean;
 }) {
   const className = 'font-body text-white/70 hover:text-white transition-colors';
   if (isRoute) {
     return (
       <Link to={href} className={className}>
+        {label}
+      </Link>
+    );
+  }
+  if (isHomeSection) {
+    const hash = href.replace(/^\/#/, '');
+    return (
+      <Link to={{ pathname: '/', hash }} className={className}>
         {label}
       </Link>
     );

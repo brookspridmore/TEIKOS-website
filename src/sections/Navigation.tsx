@@ -5,6 +5,7 @@ import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { APP_LOGIN_URL, APP_SIGNUP_URL } from '@/config/appUrls';
+import { dispatchFeaturesTab, scrollToHash } from '@/lib/scrollToSection';
 
 type NavLink = {
   label: string;
@@ -37,29 +38,23 @@ export function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const resolveHashHref = (href: string) => (isHome ? href : `/${href}`);
-
   const goToSection = (link: NavLink) => {
-    if (link.isRoute) {
-      navigate(link.href);
-      setIsOpen(false);
-      return;
-    }
-    if (link.featuresTab) {
-      window.dispatchEvent(
-        new CustomEvent('teikos:features-tab', { detail: link.featuresTab }),
-      );
-    }
-    if (!isHome) {
-      navigate(`/${link.href}`);
-      setIsOpen(false);
-      return;
-    }
-    const element = document.querySelector(link.href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
     setIsOpen(false);
+    const hash = link.href.replace(/^#/, '');
+
+    if (isHome) {
+      if (link.featuresTab) {
+        dispatchFeaturesTab(link.featuresTab);
+      }
+      scrollToHash(`#${hash}`);
+      window.history.replaceState(null, '', `#${hash}`);
+      return;
+    }
+
+    navigate(
+      { pathname: '/', hash },
+      { state: link.featuresTab ? { featuresTab: link.featuresTab } : undefined },
+    );
   };
 
   return (
@@ -108,12 +103,10 @@ export function Navigation() {
               ) : (
                 <motion.a
                   key={link.label}
-                  href={resolveHashHref(link.href)}
+                  href={isHome ? link.href : `/${link.href}`}
                   onClick={(e) => {
-                    if (isHome) {
-                      e.preventDefault();
-                      goToSection(link);
-                    }
+                    e.preventDefault();
+                    goToSection(link);
                   }}
                   className="relative font-body text-sm font-medium text-dark hover:text-dark/80 transition-colors"
                   whileHover="hover"
@@ -165,14 +158,10 @@ export function Navigation() {
                   ) : (
                     <a
                       key={link.label}
-                      href={resolveHashHref(link.href)}
+                      href={isHome ? link.href : `/${link.href}`}
                       onClick={(e) => {
-                        if (isHome) {
-                          e.preventDefault();
-                          goToSection(link);
-                        } else {
-                          setIsOpen(false);
-                        }
+                        e.preventDefault();
+                        goToSection(link);
                       }}
                       className="font-heading font-semibold text-lg text-dark text-left hover:text-teikos-blue transition-colors"
                     >
