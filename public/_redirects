@@ -1,0 +1,4 @@
+/*    SPA fallback — Vercel/Netlify */
+/*    /docs/*  /docs/:splat  /index.html  200 */
+/docs/*    /index.html   200
+/integrations/*    /index.html   200

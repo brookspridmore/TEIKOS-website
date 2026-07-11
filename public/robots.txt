@@ -1,4 +1,29 @@
 User-agent: *
 Allow: /
 
+# AI crawlers — allow indexing for ChatGPT, Claude, Gemini, Perplexity, etc.
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
 Sitemap: https://www.teikos.io/sitemap.xml
+
+# AI-readable site summary
+# https://www.teikos.io/llms.txt

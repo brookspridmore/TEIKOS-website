@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Check, Copy, Webhook } from 'lucide-react';
 import { useState } from 'react';
@@ -9,24 +10,32 @@ const integrations = [
     type: 'Native Playbook',
     status: 'Live',
     color: '#6366f1',
+    href: '/integrations/vapi',
+    external: 'https://vapi.ai',
   },
   {
     name: 'Retell',
     type: 'Native Playbook',
     status: 'Live',
     color: '#8b5cf6',
+    href: '/integrations/retell',
+    external: 'https://retellai.com',
   },
   {
     name: 'n8n',
     type: 'Automation Playbook',
     status: 'Live',
     color: '#ff6d5a',
+    href: '/integrations/n8n',
+    external: 'https://n8n.io',
   },
   {
     name: 'Webhook / HTTP',
     type: 'Universal',
     status: 'Live',
     color: '#10b981',
+    href: '/integrations/webhook',
+    external: undefined,
   },
 ];
 
@@ -64,7 +73,11 @@ export function Integrations() {
             <span className="text-teikos-coral">Voice Stack</span>
           </h2>
           <p className="font-body text-lg text-dark/70 max-w-2xl mx-auto">
-            Native playbooks for leading platforms. Universal webhook support for everything else.
+            Native playbooks for{' '}
+            <a href="https://vapi.ai" target="_blank" rel="noopener noreferrer" className="text-teikos-blue-deep font-medium hover:underline">Vapi</a>,{' '}
+            <a href="https://retellai.com" target="_blank" rel="noopener noreferrer" className="text-teikos-blue-deep font-medium hover:underline">Retell</a>, and{' '}
+            <a href="https://n8n.io" target="_blank" rel="noopener noreferrer" className="text-teikos-blue-deep font-medium hover:underline">n8n</a>.
+            {' '}See our <Link to="/docs" className="text-teikos-blue-deep font-medium hover:underline">documentation</Link> for setup guides.
           </p>
         </ScrollReveal>
 
@@ -72,8 +85,9 @@ export function Integrations() {
         <StaggerReveal className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {integrations.map((integration, index) => (
             <StaggerItem key={index}>
+              <Link to={integration.href}>
               <motion.div
-                className="teikos-card text-center group cursor-pointer"
+                className="teikos-card text-center group cursor-pointer h-full"
                 whileHover={{ scale: 1.02 }}
               >
                 <div 
@@ -101,6 +115,7 @@ export function Integrations() {
                   </span>
                 </div>
               </motion.div>
+              </Link>
             </StaggerItem>
           ))}
         </StaggerReveal>

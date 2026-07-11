@@ -1,0 +1,47 @@
+# TEIKOS
+
+> TEIKOS is scheduling infrastructure for AI voice agents and AI voice receptionists. Atomic hold-confirm booking, real-time availability, zero double-bookings. Integrates with Vapi, Retell AI, n8n, and any HTTP webhook.
+
+TEIKOS solves the infrastructure gap in the voice AI stack: platforms like Vapi and Retell handle voice/LLM/telephony, but scheduling requires a source of truth. TEIKOS provides database-locked appointment booking via a tool-router API.
+
+## Key pages
+
+- [Home](https://www.teikos.io/): Product overview, pricing, FAQ
+- [Documentation index](https://www.teikos.io/docs): All guides
+- [Onboarding hub](https://www.teikos.io/docs/onboarding): Pick User, Pro, or Agency path
+- [User guide (Free)](https://www.teikos.io/docs/onboarding/user): Business scheduling setup
+- [Pro guide](https://www.teikos.io/docs/onboarding/pro): Voice agent integration setup
+- [Agency guide](https://www.teikos.io/docs/onboarding/agency): Multi-client voice AI management
+- [Integration setup (Pro)](https://www.teikos.io/docs/getting-started): Provision integrations
+- [Tools Reference](https://www.teikos.io/docs/tools-reference): API tools
+
+## Integrations
+
+- [Vapi + TEIKOS](https://www.teikos.io/integrations/vapi): Voice agent scheduling for Vapi
+- [Retell AI + TEIKOS](https://www.teikos.io/integrations/retell): Phone agent scheduling for Retell
+- [n8n + TEIKOS](https://www.teikos.io/integrations/n8n): Workflow automation integration
+- [Webhook / HTTP](https://www.teikos.io/integrations/webhook): Universal integration for any platform
+
+## Integration playbooks (full docs)
+
+- [Vapi playbook](https://www.teikos.io/docs/integrations/vapi)
+- [Retell playbook](https://www.teikos.io/docs/integrations/retell)
+- [n8n playbook](https://www.teikos.io/docs/integrations/n8n)
+- [Webhook / HTTP playbook](https://www.teikos.io/docs/integrations/webhook-http)
+
+## Topics covered in documentation
+
+- AI voice agent scheduling and appointment booking
+- AI voice receptionist backend / scheduling layer
+- Preventing voice agent double-bookings and hallucinated appointments
+- Vapi, Retell, n8n, Make, Zapier webhook integrations
+- Agency multi-client voice agent management
+- Business facts for voice agents
+- Agent Lab (simulation/testing)
+- Roles: Free (User), Pro, Agency
+- Troubleshooting integration auth and slot conflicts
+
+## Optional
+
+- [Full llms context](https://www.teikos.io/llms-full.txt): Extended summary for AI systems
+- [Sitemap](https://www.teikos.io/sitemap.xml)

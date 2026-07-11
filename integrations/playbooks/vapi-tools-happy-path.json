@@ -1,0 +1,119 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "business_facts_get",
+      "description": "First call: business profile, IANA timezone, services (with UUIDs), work hours, and optional facts. Use timezone for all scheduling context.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "include_facts": {
+            "type": "boolean",
+            "description": "Include custom business facts (default true)."
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "caller_intake",
+      "description": "Resolve caller phone to client or prospect. Call early in the conversation.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "caller_phone": { "type": "string", "description": "E.164, e.g. +15551234567" },
+          "caller_payload": {
+            "type": "object",
+            "description": "Optional { name, email, notes }"
+          }
+        },
+        "required": ["caller_phone"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "availability_check",
+      "description": "List open slots for one service. Prefer inclusive business-calendar range_start_date and range_end_date (YYYY-MM-DD). Each window includes slot_id, iso_start, iso_end, speakable_time, speakable_end. Use speakable_time for what you say to the caller.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "service_id": { "type": "string", "description": "UUID from business_facts_get services[]" },
+          "range_start_date": { "type": "string", "description": "YYYY-MM-DD inclusive, business calendar" },
+          "range_end_date": { "type": "string", "description": "YYYY-MM-DD inclusive, business calendar" },
+          "range_start": { "type": "string", "description": "Alternative: ISO instant with Z/offset" },
+          "range_end": { "type": "string", "description": "Alternative: ISO end (exclusive)" }
+        },
+        "required": ["service_id", "range_start_date", "range_end_date"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "appointment_hold",
+      "description": "Hold a slot for 3 minutes. Pass slot_id from the chosen availability window and the same service_id. Then call appointment_confirm with hold_token.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "service_id": { "type": "string", "description": "Same service UUID used in availability_check" },
+          "slot_id": { "type": "string", "description": "Exact string from windows[].slot_id" },
+          "caller_phone": { "type": "string", "description": "E.164" },
+          "caller_payload": { "type": "object", "description": "Optional { name, email }" }
+        },
+        "required": ["service_id", "slot_id", "caller_phone"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "appointment_confirm",
+      "description": "Confirm after a successful hold. Requires hold_token from appointment_hold response data.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "hold_token": { "type": "string", "description": "From appointment_hold data.hold_token" }
+        },
+        "required": ["hold_token"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "appointment_cancel",
+      "description": "Cancel a held or confirmed appointment by appointment_id.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "appointment_id": { "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "required": ["appointment_id"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "appointment_reschedule",
+      "description": "Move a confirmed appointment. Prefer new_slot_id from a fresh availability_check for the same service; or new_start_time ISO; or new_start_date + new_start_time_local in business TZ.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "appointment_id": { "type": "string" },
+          "new_slot_id": { "type": "string", "description": "From availability_check windows[].slot_id" },
+          "new_start_time": { "type": "string", "description": "ISO instant if not using new_slot_id" },
+          "new_start_date": { "type": "string" },
+          "new_start_time_local": { "type": "string" },
+          "reason": { "type": "string" }
+        },
+        "required": ["appointment_id"]
+      }
+    }
+  }
+]

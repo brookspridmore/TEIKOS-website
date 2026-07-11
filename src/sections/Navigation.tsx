@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,18 +11,23 @@ type NavLink = {
   href: string;
   /** When set, Features section listens and switches tabs before scroll */
   featuresTab?: 'agency' | 'business';
+  /** Internal route (react-router) vs homepage anchor */
+  isRoute?: boolean;
 };
 
 const navLinks: NavLink[] = [
   { label: 'Features', href: '#features' },
   { label: 'Pricing', href: '#pricing' },
-  { label: 'Docs', href: '#docs' },
+  { label: 'Docs', href: '/docs', isRoute: true },
   { label: 'Agency', href: '#features', featuresTab: 'agency' },
 ];
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHome = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,11 +37,23 @@ export function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const resolveHashHref = (href: string) => (isHome ? href : `/${href}`);
+
   const goToSection = (link: NavLink) => {
+    if (link.isRoute) {
+      navigate(link.href);
+      setIsOpen(false);
+      return;
+    }
     if (link.featuresTab) {
       window.dispatchEvent(
         new CustomEvent('teikos:features-tab', { detail: link.featuresTab }),
       );
+    }
+    if (!isHome) {
+      navigate(`/${link.href}`);
+      setIsOpen(false);
+      return;
     }
     const element = document.querySelector(link.href);
     if (element) {
@@ -57,49 +75,61 @@ export function Navigation() {
     >
       <div className="container-max mx-auto px-4 sm:px-6 lg:px-8">
         <nav className="flex items-center justify-between h-[72px]">
-          {/* Logo */}
-          <motion.a 
-            href="#"
-            className="flex items-center gap-2"
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.2 }}
-          >
-            <div className="w-10 h-10 relative">
-              <img
-                src="/images/logo-cube.png"
-                alt=""
-                width={40}
-                height={40}
-                decoding="async"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <span className="font-heading font-bold text-xl text-dark">TEIKOS</span>
-          </motion.a>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <motion.button
-                key={link.label}
-                onClick={() => goToSection(link)}
-                className="relative font-body text-sm font-medium text-dark hover:text-dark/80 transition-colors"
-                whileHover="hover"
-              >
-                {link.label}
-                <motion.span
-                  className="absolute -bottom-1 left-0 w-full h-0.5 bg-teikos-blue origin-left"
-                  initial={{ scaleX: 0 }}
-                  variants={{
-                    hover: { scaleX: 1 },
-                  }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
+          <Link to="/" className="flex items-center gap-2">
+            <motion.div
+              className="flex items-center gap-2"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="w-10 h-10 relative">
+                <img
+                  src="/images/logo-cube.png"
+                  alt="TEIKOS"
+                  width={40}
+                  height={40}
+                  decoding="async"
+                  className="w-full h-full object-contain"
                 />
-              </motion.button>
-            ))}
+              </div>
+              <span className="font-heading font-bold text-xl text-dark">TEIKOS</span>
+            </motion.div>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) =>
+              link.isRoute ? (
+                <Link
+                  key={link.label}
+                  to={link.href}
+                  className="relative font-body text-sm font-medium text-dark hover:text-dark/80 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <motion.a
+                  key={link.label}
+                  href={resolveHashHref(link.href)}
+                  onClick={(e) => {
+                    if (isHome) {
+                      e.preventDefault();
+                      goToSection(link);
+                    }
+                  }}
+                  className="relative font-body text-sm font-medium text-dark hover:text-dark/80 transition-colors"
+                  whileHover="hover"
+                >
+                  {link.label}
+                  <motion.span
+                    className="absolute -bottom-1 left-0 w-full h-0.5 bg-teikos-blue origin-left"
+                    initial={{ scaleX: 0 }}
+                    variants={{ hover: { scaleX: 1 } }}
+                    transition={{ duration: 0.3, ease: 'easeOut' }}
+                  />
+                </motion.a>
+              ),
+            )}
           </div>
 
-          {/* Desktop CTAs */}
           <div className="hidden md:flex items-center gap-4">
             <Button variant="ghost" className="font-heading font-semibold text-sm text-dark hover:text-dark/80" asChild>
               <a href={APP_LOGIN_URL}>Sign In</a>
@@ -114,7 +144,6 @@ export function Navigation() {
             </motion.a>
           </div>
 
-          {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button type="button" variant="ghost" size="icon" aria-label="Open main menu">
@@ -123,15 +152,34 @@ export function Navigation() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-white border-l-[3px] border-dark">
               <div className="flex flex-col gap-6 mt-8">
-                {navLinks.map((link) => (
-                  <button
-                    key={link.label}
-                    onClick={() => goToSection(link)}
-                    className="font-heading font-semibold text-lg text-dark text-left hover:text-teikos-blue transition-colors"
-                  >
-                    {link.label}
-                  </button>
-                ))}
+                {navLinks.map((link) =>
+                  link.isRoute ? (
+                    <Link
+                      key={link.label}
+                      to={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className="font-heading font-semibold text-lg text-dark hover:text-teikos-blue transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a
+                      key={link.label}
+                      href={resolveHashHref(link.href)}
+                      onClick={(e) => {
+                        if (isHome) {
+                          e.preventDefault();
+                          goToSection(link);
+                        } else {
+                          setIsOpen(false);
+                        }
+                      }}
+                      className="font-heading font-semibold text-lg text-dark text-left hover:text-teikos-blue transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  ),
+                )}
                 <hr className="border-dark/20" />
                 <Button variant="ghost" className="font-heading font-semibold text-lg text-dark justify-start" asChild>
                   <a href={APP_LOGIN_URL} onClick={() => setIsOpen(false)}>

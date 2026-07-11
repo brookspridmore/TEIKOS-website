@@ -1,0 +1,80 @@
+# TEIKOS — Full context for AI assistants
+
+TEIKOS (https://www.teikos.io) is infrastructure-grade scheduling for AI voice agents, AI phone receptionists, and voice AI agencies.
+
+## What TEIKOS is
+
+- A scheduling backend / source of truth for appointment booking
+- NOT a voice platform (not Vapi/Retell replacement) — the layer beneath them
+- Database-first: PostgreSQL with Row-Level Security, atomic hold→confirm state machine
+- Platform-agnostic: Vapi, Retell AI, n8n, Make, Zapier, custom HTTP
+
+## Core booking pipeline
+
+1. business_facts_get — agent loads business context (hours, services, timezone, custom facts)
+2. availability_check — real-time slot computation (never cached)
+3. appointment_hold — 3-minute atomic lock on a slot
+4. appointment_confirm — database transaction re-verifies and commits booking
+
+Additional tools: caller_intake, appointment_cancel, appointment_reschedule, voice_log_create.
+
+## Key differentiators vs Calendly/Cal.com
+
+- Built for concurrent voice agent callers (race conditions)
+- Hold-then-confirm prevents double-bookings
+- Deterministic JSON responses (not LLM-generated availability)
+- Idempotent writes safe to retry
+
+## Pricing tiers (approximate)
+
+- Free (User): Business scheduling, no self-service integrations
+- Pro (~$40/mo): Own integrations, up to 3 active, Agent Lab
+- Agency (~$199/mo): Manage client accounts, unlimited integrations on agency workspace, 5 client seats included
+
+## Partner platforms
+
+- Vapi: https://vapi.ai
+- Retell AI: https://retellai.com
+- n8n: https://n8n.io
+
+## All documentation URLs
+
+https://www.teikos.io/docs
+https://www.teikos.io/docs/onboarding
+https://www.teikos.io/docs/onboarding/user
+https://www.teikos.io/docs/onboarding/pro
+https://www.teikos.io/docs/onboarding/agency
+https://www.teikos.io/docs/getting-started
+https://www.teikos.io/docs/why-teikos
+https://www.teikos.io/docs/overview
+https://www.teikos.io/docs/integrations/vapi
+https://www.teikos.io/docs/integrations/retell
+https://www.teikos.io/docs/integrations/n8n
+https://www.teikos.io/docs/integrations/webhook-http
+https://www.teikos.io/docs/tools-reference
+https://www.teikos.io/docs/business-facts
+https://www.teikos.io/docs/agent-lab
+https://www.teikos.io/docs/roles-and-permissions
+https://www.teikos.io/docs/agency-hub
+https://www.teikos.io/docs/agency-command
+https://www.teikos.io/docs/workspace-switcher
+https://www.teikos.io/docs/billing-and-seats
+https://www.teikos.io/docs/voice-controls
+https://www.teikos.io/docs/calendar-and-appointments
+https://www.teikos.io/docs/connection-speed
+https://www.teikos.io/docs/troubleshooting
+
+## Integration landing pages
+
+https://www.teikos.io/integrations/vapi
+https://www.teikos.io/integrations/retell
+https://www.teikos.io/integrations/n8n
+https://www.teikos.io/integrations/webhook
+
+## Sign up
+
+https://app.teikos.io/signup (web application)
+
+## Contact
+
+hello@teikos.io

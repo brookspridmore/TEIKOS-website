@@ -1,34 +1,22 @@
-import { Navigation } from './sections/Navigation';
-import { Hero } from './sections/Hero';
-import { ProblemSolution } from './sections/ProblemSolution';
-import { APIFlow } from './sections/APIFlow';
-import { Features } from './sections/Features';
-import { Integrations } from './sections/Integrations';
-import { Architecture } from './sections/Architecture';
-import { Pricing } from './sections/Pricing';
-import { Demo } from './sections/Demo';
-import { FAQ } from './sections/FAQ';
-import { CTABanner } from './sections/CTABanner';
-import { Footer } from './sections/Footer';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HomePage } from './pages/HomePage';
+import { DocsLayout } from './pages/docs/DocsLayout';
+import { DocsIndexPage } from './pages/docs/DocsIndexPage';
+import { DocsSectionPage } from './pages/docs/DocsSectionPage';
+import { IntegrationLandingPage } from './pages/integrations/IntegrationLandingPage';
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <Navigation />
-      <main>
-        <Hero />
-        <ProblemSolution />
-        <APIFlow />
-        <Features />
-        <Integrations />
-        <Architecture />
-        <Pricing />
-        <Demo />
-        <FAQ />
-        <CTABanner />
-      </main>
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/integrations/:slug" element={<IntegrationLandingPage />} />
+        <Route path="/docs" element={<DocsLayout />}>
+          <Route index element={<DocsIndexPage />} />
+          <Route path="*" element={<DocsSectionPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
